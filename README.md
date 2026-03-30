@@ -49,3 +49,23 @@ Tip: to read a specific asset, you can use the `readAsset` endpoint.
 ## Complete the challenge
 
 To complete the challenge, you must send us the link to your forked repository with the code of your application. Please, provide instructions to execute the code.
+
+## Local development
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Create a production build:
+
+```bash
+npm run build
+```
