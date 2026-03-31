@@ -4,7 +4,7 @@ import {
   buildKeyFromRecord,
   getEmptyFormValues,
   normalizeRecordToForm
-} from '../domain/entities/catalog.js';
+} from '../domain/entities/catalog';
 
 describe('catalog helpers', () => {
   it('cria estado inicial vazio para formularios', () => {
@@ -32,11 +32,11 @@ describe('catalog helpers', () => {
     });
   });
 
-  it('monta payload de asset a partir do formulario', () => {
+  it('monta payload de asset a partir do formulario com trim', () => {
     expect(
       buildAssetFromForm('watchlist', {
-        title: 'Favoritas',
-        description: 'Minha lista favorita',
+        title: ' Favoritas ',
+        description: ' Minha lista favorita ',
         tvShows: ['tvShows:1']
       })
     ).toEqual({

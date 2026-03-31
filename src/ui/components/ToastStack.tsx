@@ -1,3 +1,5 @@
+import type { ToastItem } from '../../app/hooks/useToast';
+
 const TOAST_CONFIG = {
   success: {
     icon: 'Sucesso',
@@ -14,9 +16,14 @@ const TOAST_CONFIG = {
     border: 'border-[var(--color-rose)]/45',
     background: 'bg-[rgba(232,93,117,0.16)]'
   }
+} as const;
+
+type ToastStackProps = {
+  items: ToastItem[];
+  onDismiss: (id: string) => void;
 };
 
-function ToastStack({ items, onDismiss }) {
+function ToastStack({ items, onDismiss }: ToastStackProps) {
   return (
     <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-[min(380px,calc(100vw-2rem))] flex-col gap-3">
       {items.map((item) => (

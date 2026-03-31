@@ -1,4 +1,33 @@
-function Field({ field, value, onChange, relationOptions, disabled, hasError }) {
+import { forwardRef, type FormEvent } from 'react';
+import type { EntityDefinition, EntityField, FormValue } from '../../domain/entities/catalog';
+
+type RelationOption = {
+  value: string;
+  label: string;
+};
+
+type EntityFormProps = {
+  entity: EntityDefinition;
+  values: Record<string, FormValue>;
+  mode: 'create' | 'update';
+  onChange: (name: string, value: FormValue) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onReset: () => void;
+  relationOptions: Record<string, RelationOption[]>;
+  isSubmitting: boolean;
+  errors: Record<string, string>;
+};
+
+type FieldProps = {
+  field: EntityField;
+  value: FormValue;
+  onChange: (name: string, value: FormValue) => void;
+  relationOptions: RelationOption[];
+  disabled: boolean;
+  hasError: boolean;
+};
+
+function Field({ field, value, onChange, relationOptions, disabled, hasError }: FieldProps) {
   const sharedClassName = `w-full rounded-2xl border px-4 py-3 text-sm outline-none transition placeholder:text-white/25 ${
     disabled
       ? 'cursor-not-allowed border-[var(--color-paper)]/8 bg-[var(--color-paper)]/[0.05] text-[var(--color-paper)]/45'
@@ -12,9 +41,9 @@ function Field({ field, value, onChange, relationOptions, disabled, hasError }) 
       <textarea
         id={field.name}
         name={field.name}
-        rows="5"
+        rows={5}
         required={field.required}
-        value={value}
+        value={String(value ?? '')}
         disabled={disabled}
         onChange={(event) => onChange(field.name, event.target.value)}
         className={`${sharedClassName} resize-y`}
@@ -28,7 +57,7 @@ function Field({ field, value, onChange, relationOptions, disabled, hasError }) 
         id={field.name}
         name={field.name}
         required={field.required}
-        value={value}
+        value={String(value ?? '')}
         disabled={disabled}
         onChange={(event) => onChange(field.name, event.target.value)}
         className={sharedClassName}
@@ -49,7 +78,7 @@ function Field({ field, value, onChange, relationOptions, disabled, hasError }) 
         id={field.name}
         name={field.name}
         multiple
-        value={value}
+        value={Array.isArray(value) ? value : []}
         disabled={disabled}
         onChange={(event) =>
           onChange(
@@ -74,7 +103,7 @@ function Field({ field, value, onChange, relationOptions, disabled, hasError }) 
       name={field.name}
       type={field.type}
       required={field.required}
-      value={value}
+      value={String(value ?? '')}
       disabled={disabled}
       min={field.min}
       max={field.max}
@@ -85,19 +114,15 @@ function Field({ field, value, onChange, relationOptions, disabled, hasError }) 
   );
 }
 
-function EntityForm({
-  entity,
-  values,
-  mode,
-  onChange,
-  onSubmit,
-  onReset,
-  relationOptions,
-  isSubmitting,
-  errors
-}) {
+const EntityForm = forwardRef<HTMLElement, EntityFormProps>(function EntityForm(
+  { entity, values, mode, onChange, onSubmit, onReset, relationOptions, isSubmitting, errors },
+  ref
+) {
   return (
-    <section className="rounded-[24px] border border-[var(--color-paper)]/12 bg-[linear-gradient(180deg,rgba(24,33,37,0.9),rgba(157,105,163,0.16))] p-5 shadow-[var(--shadow-panel)] backdrop-blur-xl">
+    <section
+      ref={ref}
+      className="rounded-[24px] border border-[var(--color-paper)]/12 bg-[linear-gradient(180deg,rgba(24,33,37,0.9),rgba(157,105,163,0.16))] p-5 shadow-[var(--shadow-panel)] backdrop-blur-xl"
+    >
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--color-paper)]/50">
@@ -128,14 +153,16 @@ function EntityForm({
               value={values[field.name]}
               onChange={onChange}
               relationOptions={relationOptions[field.name] ?? []}
-              disabled={mode === 'update' && field.key}
+              disabled={mode === 'update' && Boolean(field.key)}
               hasError={Boolean(errors[field.name])}
             />
             {errors[field.name] ? (
               <p className="mt-2 text-xs text-[var(--color-rose)]">{errors[field.name]}</p>
             ) : null}
             {field.type === 'multi-relation' ? (
-              <p className="mt-2 text-xs text-[var(--color-paper)]/48">Use Ctrl/Cmd para selecionar várias séries.</p>
+              <p className="mt-2 text-xs text-[var(--color-paper)]/48">
+                Use Ctrl/Cmd para selecionar várias séries.
+              </p>
             ) : null}
           </div>
         ))}
@@ -143,13 +170,13 @@ function EntityForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="cursor-pointer w-full rounded-full bg-[linear-gradient(90deg,var(--color-mint),#7cf2bf)] px-5 py-3 font-display text-base font-semibold text-slate-950 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full cursor-pointer rounded-full bg-[linear-gradient(90deg,var(--color-mint),#7cf2bf)] px-5 py-3 font-display text-base font-semibold text-slate-950 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? 'Salvando...' : mode === 'create' ? `Criar ${entity.singular}` : `Atualizar ${entity.singular}`}
         </button>
       </form>
     </section>
   );
-}
+});
 
 export default EntityForm;

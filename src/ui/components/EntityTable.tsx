@@ -1,6 +1,22 @@
-import { formatRecordValue, getRecordLabel } from '../../domain/entities/catalog.js';
+import {
+  formatRecordValue,
+  getRecordLabel,
+  type CatalogRecord,
+  type EntityDefinition,
+  type RelatedMaps
+} from '../../domain/entities/catalog';
 
-function EntityTable({ entity, records, relatedMaps, onEdit, onDelete, emptyMessage, isLoading }) {
+type EntityTableProps = {
+  entity: EntityDefinition;
+  records: CatalogRecord[];
+  relatedMaps: RelatedMaps;
+  onEdit: (record: CatalogRecord) => void;
+  onDelete: (record: CatalogRecord) => void;
+  emptyMessage: string;
+  isLoading: boolean;
+};
+
+function EntityTable({ entity, records, relatedMaps, onEdit, onDelete, emptyMessage, isLoading }: EntityTableProps) {
   if (isLoading) {
     return (
       <div className="rounded-[24px] border border-[var(--color-paper)]/10 bg-[var(--color-steel)]/15 p-6 text-sm text-[var(--color-paper)]/70">
@@ -22,7 +38,7 @@ function EntityTable({ entity, records, relatedMaps, onEdit, onDelete, emptyMess
     <div className="space-y-4">
       {records.map((record) => (
         <article
-          key={record['@key']}
+          key={String(record['@key'] ?? `${entity.assetType}-${Math.random()}`)}
           className="rounded-[24px] border border-[var(--color-paper)]/10 bg-[linear-gradient(180deg,rgba(245,251,239,0.05),rgba(97,112,125,0.08))] p-5 shadow-lg shadow-black/10"
         >
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -38,8 +54,13 @@ function EntityTable({ entity, records, relatedMaps, onEdit, onDelete, emptyMess
 
               <dl className="mt-4 grid gap-3 md:grid-cols-2">
                 {entity.fields.map((field) => (
-                  <div key={field.name} className="rounded-2xl border border-[var(--color-paper)]/8 bg-[var(--color-paper)]/4 p-3">
-                    <dt className="text-xs uppercase tracking-[0.2em] text-[var(--color-paper)]/48">{field.label}</dt>
+                  <div
+                    key={field.name}
+                    className="rounded-2xl border border-[var(--color-paper)]/8 bg-[var(--color-paper)]/4 p-3"
+                  >
+                    <dt className="text-xs uppercase tracking-[0.2em] text-[var(--color-paper)]/48">
+                      {field.label}
+                    </dt>
                     <dd className="mt-1 text-sm text-[var(--color-paper)]/84">
                       {formatRecordValue(field, record[field.name], relatedMaps)}
                     </dd>

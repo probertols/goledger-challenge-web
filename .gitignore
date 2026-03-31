@@ -4,4 +4,5 @@ dist
 .codex
 storybook-static
 .env.local
+api-credentials.txt
 .storybook-home
