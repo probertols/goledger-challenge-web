@@ -1,64 +1,142 @@
-# GoLedger Challenge
+# GoLedger Challenge Web
 
-In this challenge you will create a web interface to a blockchain application. In this application you must implement a imdb-like interface, to catalogue TV Shows, with series, seasons, episodes and watchlist registration.
+Uma interface web para catálogo de séries, temporadas, episódios e watchlists, integrada à API da GoLedger.
 
-# Requirements
+![React](https://img.shields.io/badge/React-18-20232A?logo=react)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4-06B6D4?logo=tailwindcss)
+![Storybook](https://img.shields.io/badge/Storybook-8-FF4785?logo=storybook)
+![Vitest](https://img.shields.io/badge/Vitest-2-6E9F18?logo=vitest)
+![Status](https://img.shields.io/badge/status-ready%20to%20demo-40f99b)
 
-- Your application should be able to add/remove/edit and show all tv shows, seasons, episodes and watchlists;
-- Use **React** or **Next.js** (all UI libraries are allowed);
+## Visão Geral
 
-## Instructions
+O objetivo deste projeto é entregar uma aplicação React ou Next.js com operações completas de:
 
-- Fork the repository [https://github.com/goledgerdev/goledger-challenge-web](https://github.com/goledgerdev/goledger-challenge-web)
-    - Fork it, do **NOT** clone it, since you will need to send us your forked repository
-    - If you **cannot** fork it, create a private repository and give access to `andremacedopv` and `lucas-campelo`.
-- Create an web application using React. You will implement the basic operations provided by the API, which are `Create`, `Update`, `Delete` and `Search`.
-- Improve your application with a beautiful UI.
+- criação
+- edição
+- exclusão
+- busca
 
-## Server
+O sistema funciona como um catálogo no estilo IMDb, mas com identidade visual própria, interface em português, feedback visual para o usuário e integração com uma API blockchain-backed.
+Optei por React, pois em um cenário real Next elevaria o custo e não sei se temos budget pra isso.
 
-The data are obtained using a rest server at this address: `http://ec2-50-19-36-138.compute-1.amazonaws.com`
+## Preview
 
-Also, a Swagger with the endpoints specifications for the operations is provided at this address: `http://ec2-50-19-36-138.compute-1.amazonaws.com/api-docs/index.html`.
+Principais pontos da aplicação:
 
-Note: The API is protected with Basic Auth. The credentials were sent to you by email.
+- navegação lateral por tipo de entidade
+- painel de busca e listagem
+- formulário de criação e edição
+- feedback com toasts
+- validação visual de campos obrigatórios
+- documentação de componentes no Storybook
 
-Tip: execute each operation in the Swagger for information on payload format and endpoint addresses. See examples below.
+## Funcionalidades
 
-### Get Schema
-Execute a `getSchema` operation to get information on which asset types are available. Don't forget to authenticate with the credentials provided.
+- CRUD de `Séries`
+- CRUD de `Temporadas`
+- CRUD de `Episódios`
+- CRUD de `Watchlists`
+- busca local por entidade ativa
+- feedback com toasts de sucesso, erro e exclusão
+- validação visual de formulário
+- Storybook para documentação dos componentes
+- sanitização básica contra XSS
 
-```bash
-curl -X POST "http://ec2-50-19-36-138.compute-1.amazonaws.com/api/query/getSchema" -H "accept: */*" -H "Content-Type: application/json"
+## Stack
+
+- `React`
+- `Vite`
+- `Tailwind CSS`
+- `Storybook`
+- `Vitest`
+- `DOMPurify`
+
+## Scripts
+
+| Comando | Descrição |
+|---|---|
+| `npm install` | instala as dependências |
+| `npm run dev` | inicia o ambiente local |
+| `npm run build` | gera o build de produção |
+| `npm test` | executa os testes unitários |
+| `npm run storybook` | inicia o Storybook |
+| `npm run build-storybook` | gera o build estático do Storybook |
+
+## Arquitetura
+
+O projeto foi organizado por responsabilidade:
+
+```text
+src/
+  app/                 # composição da aplicação e fluxo principal
+  domain/entities/     # modelagem e helpers das entidades
+  infrastructure/api/  # integração com API e sanitização
+  stories/             # documentação visual no Storybook
+  tests/               # testes unitários
+  ui/components/       # componentes reutilizáveis
 ```
 
-Execute a getSchema with a payload to get more details on a particula asset.
+## API
+
+Base URL:
 
 ```bash
-curl -X POST "http://ec2-50-19-36-138.compute-1.amazonaws.com/api/query/getSchema" -H "accept: */*" -H "Content-Type: application/json" -d "{\"assetType\":\"tvShows\"}"
+http://ec2-50-19-36-138.compute-1.amazonaws.com/api
 ```
-Tip: the same can be done with transactions, using the `getTx` endpoint.
 
-### Search
-Perform a search query on a particular asset type.
+Swagger:
+
 ```bash
-curl -X POST "http://ec2-50-19-36-138.compute-1.amazonaws.com/api/query/search" -H "accept: */*" -H "Content-Type: application/json" -d "{\"query\":{\"selector\":{\"@assetType\":\"seasons\"}}}"
+http://ec2-50-19-36-138.compute-1.amazonaws.com/api-docs/index.html
 ```
-Tip: to read a specific asset, you can use the `readAsset` endpoint.
 
-## Complete the challenge
+O projeto usa autenticação Basic Auth para consumir a API.
 
-To complete the challenge, you must send us the link to your forked repository with the code of your application. Please, provide instructions to execute the code.
+## Segurança
 
-## Local development
+Foram aplicadas duas proteções básicas:
 
-Install the dependencies:
+- sanitização de entradas com `DOMPurify`
+- `Content-Security-Policy` básica no `index.html`
+
+Observação:
+como a aplicação consome a API diretamente no frontend, as credenciais ficam expostas no ambiente cliente. Para produção, o ideal seria mover isso para um backend intermediário.
+
+## Validações de Formulário
+
+Os campos obrigatórios com `*` possuem validação customizada:
+
+- textos obrigatórios: mínimo de `3` caracteres
+- descrições obrigatórias: mínimo de `10` caracteres
+- selects obrigatórios: não podem ficar vazios
+- campos inválidos recebem borda vermelha e mensagem abaixo do input
+
+## Testes
+
+Foi criada uma suíte de testes unitários simples e adequada para demonstrar fundamentos de qualidade de código:
+
+- validação do formulário
+- helpers de transformação de dados
+- sanitização contra XSS
+
+Executando os testes:
+
+```bash
+npm test
+```
+
+### Fluxo rápido
 
 ```bash
 npm install
+npm run dev
 ```
 
-Create a `.env.local` if you want to override the default challenge API settings:
+## Variáveis de Ambiente
+
+Você pode criar um arquivo `.env.local` para sobrescrever a configuração padrão:
 
 ```bash
 VITE_API_BASE_URL=http://ec2-50-19-36-138.compute-1.amazonaws.com/api
@@ -66,20 +144,34 @@ VITE_API_USERNAME=goledger
 VITE_API_PASSWORD=5NxVCAjC
 ```
 
-Start the development server:
+## Destaques Técnicos
 
-```bash
-npm run dev
-```
+- layout customizado com paleta definida no desafio
+- sidebar com navegação por contexto
+- cor dinâmica da área ativa conforme a entidade selecionada
+- feedback visual para operações de CRUD
+- formulário com validação própria e UX mais guiada
+- Storybook para apresentar os componentes isoladamente
 
-Create a production build:
+## Qualidade do Projeto
 
-```bash
-npm run build
-```
+- build da aplicação validado com `npm run build`
+- Storybook validado com `npm run build-storybook`
+- testes unitários cobrindo validação, sanitização e helpers de domínio
+- estrutura organizada para manutenção e evolução
 
-Start Storybook:
+## Status do Projeto
 
-```bash
-npm run storybook
-```
+Estado atual:
+
+- aplicação buildando com sucesso
+- Storybook buildando com sucesso
+- testes unitários passando
+
+## Próximos Passos
+
+- mover credenciais da API para um backend intermediário
+- ampliar cobertura de testes para componentes e fluxos de integração
+- adicionar paginação e filtros mais avançados na busca
+- refinar responsividade para cenários de tela menor
+
