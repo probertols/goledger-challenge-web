@@ -58,6 +58,14 @@ Install the dependencies:
 npm install
 ```
 
+Create a `.env.local` if you want to override the default challenge API settings:
+
+```bash
+VITE_API_BASE_URL=http://ec2-50-19-36-138.compute-1.amazonaws.com/api
+VITE_API_USERNAME=goledger
+VITE_API_PASSWORD=5NxVCAjC
+```
+
 Start the development server:
 
 ```bash
@@ -68,4 +76,10 @@ Create a production build:
 
 ```bash
 npm run build
+```
+
+Start Storybook:
+
+```bash
+npm run storybook
 ```

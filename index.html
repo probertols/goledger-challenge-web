@@ -1,12 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GoLedger Challenge</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://ec2-50-19-36-138.compute-1.amazonaws.com ws:;"
+    />
+    <meta
+      name="description"
+      content="Uma interface React refinada para o desafio de catálogo de séries da GoLedger."
+    />
+    <title>Painel de Catálogo</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module" src="/src/app/main.jsx"></script>
   </body>
 </html>
